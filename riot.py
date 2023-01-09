@@ -9,7 +9,6 @@ HEADER = {
     "X-Riot-Token": api_key
 }
 
-
 def getAccountById(summonerName: str) -> dict:
     '''
     Get Account info by Summoner Name
@@ -39,8 +38,13 @@ def getSummonerDataByEncryptedId(encryptedSummonerId: str) -> dict:
         json as dictionary with data such as Rank, Tier, Wins, Losses, etc...
     '''
     endpoint = f'https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/{encryptedSummonerId}'
-    res = requests.get(endpoint, HEADER)
+    endpoint += "?api_key=" + api_key
+    res = requests.get(endpoint)
     return res.json()
 
-# pprint(getAccountById("NlCKEL"))
-# pprint(getSummonerDataByEncryptedId('v659wx8jEAW30CK5U1p18o3oqCF9pu94zVEY1p5Er0qWY5c'))
+# info = getAccountById("NlCKEL")
+# print(info.keys())
+id = 'v659wx8jEAW30CK5U1p18o3oqCF9pu94zVEY1p5Er0qWY5c'
+
+summonerData = getSummonerDataByEncryptedId(id)
+pprint(summonerData)
