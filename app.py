@@ -2,6 +2,7 @@ import discord
 import secret
 import motor.motor_asyncio
 import riot
+from pprint import pprint
 
 TOKEN = secret.disc_token
 
@@ -41,6 +42,7 @@ def get_queue_embed_val(summonerData: str, queueType: str) -> str:
 
     return q_value
 
+# TODO: refactor individual commands to its own command functions
 @client.event
 async def on_message(message):
     '''
@@ -91,6 +93,38 @@ async def on_message(message):
             name = "Flex",
             value = flexq_value,
             inline = True)
+
+        # Recent matches field
+        # TODO: refactor
+        match_value = ''
+        matches_puuid = riot.getMatchesByPuuid(puuid=info['puuid'], count=5)
+        role_map = {
+            'TOP': 'Top',
+            'JUNGLE': 'Jng',
+            'MIDDLE': 'Mid',
+            'BOTTOM': 'Adc',
+            'UTILITY':'Sup'
+        }
+        for match in matches_puuid:
+            match_data = riot.getMatchByMatchId(match)
+            i = match_data['metadata']['participants'].index(info['puuid'])
+            player = match_data['info']['participants'][i]
+            k, d, a = player['kills'], player['deaths'], player['assists']
+            kda_ratio = (k+a)/d
+            msg = '{championName}  ({position})  |  {K}/{D}/{A} ({kda:.2f} KDA)\n'.format(
+                championName=player['championName'],
+                position = role_map[player['individualPosition']],
+                K = k,
+                D = d,
+                A = a,
+                kda = kda_ratio
+            )
+            match_value += msg
+        embed.add_field(
+            name = 'Recent Matches',
+            value = match_value,
+            inline=False
+        )
 
         await message.channel.send(embed=embed)
         return
