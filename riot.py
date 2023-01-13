@@ -11,6 +11,7 @@ HEADER = {
 }
 
 
+# API: SUMMONER-V4
 def getAccountById(summonerName: str) -> dict:
     '''
     Get Account info by Summoner Name
@@ -30,7 +31,9 @@ def getAccountById(summonerName: str) -> dict:
     json_data = res.json()
     return json_data
 
+
 # TODO: check if data for SOLO_QUEUE_5x5 or FLEX exist
+# API: LEAGUE-V4
 def getSummonerDataByEncryptedId(encryptedSummonerId: str) -> dict:
     '''
     Get Detailed Summoner Data for Ranked Flex and Solo/Duo.
@@ -44,4 +47,42 @@ def getSummonerDataByEncryptedId(encryptedSummonerId: str) -> dict:
     res = requests.get(endpoint)
     json_data = res.json()
     return json_data
+
+
+# API: MATCH-V5
+def getMatchesByPuuid(puuid: str, matchType: str = None, count: int = None) -> list[str]:
+    '''
+    Get a list of match by puuids
+    * Params
+        puuid: str
+        matchType: str = filter by match type [ranked, normal, tourney, tutorial] [Optional]
+        count: int = number of matches to get [Optional]
+    '''
+    endpoint = f'https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids'
+    params = {}
+    if matchType is not None:
+        params['type'] = matchType
+    if count:
+        params['count'] = count
+    
+    res = requests.get(url=endpoint, params=params, headers=HEADER)
+    json_data = res.json()
+    return json_data
+
+
+# API: MATCH-V5
+def getMatchByMatchId(puuid: str) -> dict:
+    '''
+    Get match metadata and info by MatchId (puuid)
+    * Params:
+        puuid: str = match Id by puuid
+    * Return: 
+        dictionary metadata and detailed information about match
+    '''
+    endpoint = f'https://americas.api.riotgames.com/lol/match/v5/matches/{puuid}'
+    res = requests.get(url=endpoint, headers=HEADER)
+    json_data = res.json()
+    return json_data
+
+
 
