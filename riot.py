@@ -32,6 +32,39 @@ def getAccountById(summonerName: str) -> dict:
     return json_data
 
 
+# API: CHAMPION-MASTERY-V4
+def getAllChampionMasteryBySummonerId(summonerId: str) -> list[dict]:
+    '''
+    Get all champion mastery entries sorted by number of champion points decreasing
+    ## Params:
+        * summonerId: string = Encripted Summoner Id
+    ## Return
+        list of dictionaries with all Champion Mastery data sorted by Mastery Points
+    '''
+    endpoint: str = f'https://na1.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/{summonerId}'
+    res = requests.get(endpoint, headers=HEADER)
+    return res.json() 
+
+
+# API: CHAMPION-MASTERY-V4
+def getChampionMasteryBySummonerId(summonedId: str, count: int = None) -> list[dict]:
+    '''
+    Get specified number of champion mastery entries sorted by number of champion points decreasing
+    ## Params:
+        * summonerId: Encrypted Summoner Id
+        * count: Number of entries to retrieve (Default = 3)
+    ## Return:
+        list of dictionaries with Champion Mastery data sorted by Mastery Points
+    '''
+    endpoint = f'https://na1.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/{summonedId}/top'
+    params = {}
+    if count:
+        params['count'] = count
+    
+    res = requests.get(endpoint, params=params, headers=HEADER)
+    return res.json()
+
+
 # TODO: check if data for SOLO_QUEUE_5x5 or FLEX exist
 # API: LEAGUE-V4
 def getSummonerDataByEncryptedId(encryptedSummonerId: str) -> dict:
@@ -83,6 +116,5 @@ def getMatchByMatchId(puuid: str) -> dict:
     res = requests.get(url=endpoint, headers=HEADER)
     json_data = res.json()
     return json_data
-
 
 
