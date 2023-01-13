@@ -1,4 +1,5 @@
 secret.py
+unittest.py
 .venv/
 *.txt
 

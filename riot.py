@@ -5,16 +5,18 @@ import secret
 
 api_key = secret.api_key
 
+# Header required for all API calls
 HEADER = {
     "X-Riot-Token": api_key
 }
 
+
 def getAccountById(summonerName: str) -> dict:
     '''
     Get Account info by Summoner Name
-    Params:
+    * Params:
         summonerName: str  = In Game Name
-    Return: dictionary with the following metadata:
+    * Return: dictionary with the following keys:
         accountId: str      = Encrypted account ID. Max length 56 characters.
         profileIconId: int	= ID of the summoner icon associated with the summoner.
         revisionDate: long  = Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: summoner name change, summoner level change, or profile icon change.
@@ -26,25 +28,21 @@ def getAccountById(summonerName: str) -> dict:
     endpoint = f'https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summonerName}'
     res = requests.get(endpoint, headers=HEADER)
     json_data = res.json()
+    print(json_data)
     return json_data
 
 
 def getSummonerDataByEncryptedId(encryptedSummonerId: str) -> dict:
     '''
     Get Detailed Summoner Data for Ranked Flex and Solo/Duo.
-    Params:
+    * Params:
         encryptedSummonerId: str    = 'id' value from getAccountById
-    Return:
+    * Return:
         json as dictionary with data such as Rank, Tier, Wins, Losses, etc...
     '''
     endpoint = f'https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/{encryptedSummonerId}'
     endpoint += "?api_key=" + api_key
     res = requests.get(endpoint)
+    print(res)
     return res.json()
 
-# info = getAccountById("NlCKEL")
-# print(info.keys())
-id = 'v659wx8jEAW30CK5U1p18o3oqCF9pu94zVEY1p5Er0qWY5c'
-
-summonerData = getSummonerDataByEncryptedId(id)
-pprint(summonerData)
