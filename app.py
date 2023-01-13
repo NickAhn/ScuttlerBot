@@ -29,7 +29,7 @@ async def on_message(message):
     user_message = str(message.content).split(" ")
     print(f"{username}: {user_message} ({channel})")
 
-    if message.author == client:
+    if message.author == client.user:
         return
 
     ## -- Bot Commands -- ##
@@ -83,4 +83,3 @@ if __name__ == "__main__":
     # async with client:
         # client.mongoConnect = motor.motor_asyncio.AsyncIOMotorClient("URI")
         # await client.start(TOKEN) #.start() is a coroutine
-
