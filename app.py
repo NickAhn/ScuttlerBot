@@ -19,6 +19,28 @@ async def on_disconnect():
     print("{} has been disconnected.".format(client))
 
 
+def get_queue_embed_val(summonerData: str, queueType: str) -> str:
+    '''
+    Helper Function to get value for 'queueType' field for command ```~leaguerank```
+    * Params:
+      summonerData: str = dictionary returned from riot.getSummonerDataByEncryptionId()
+      queueType: str = RANKED_SOLO_5x5 or (ranked flex)
+    '''
+    q_value = ""
+    if not any(dic['queueType'] == queueType for dic in summonerData):
+        q_value = "N/A"
+    else:
+        rank: str = "**{tier} {rank}**".format(
+            tier=summonerData[0]['tier'].capitalize(),
+            rank=summonerData[0]['rank'])
+        winrate: float = (summonerData[0]['wins']/(summonerData[0]['wins'] + summonerData[0]['losses']))*100
+        winrate_str: str = "Winrate: **{winrate:.2f}%** ({wins}W / {losses}L)".format(
+            winrate=winrate, wins=summonerData[0]['wins'],
+            losses=summonerData[0]['losses'])
+        q_value = rank + "\n" + winrate_str
+
+    return q_value
+
 @client.event
 async def on_message(message):
     '''
@@ -57,25 +79,21 @@ async def on_message(message):
         )
 
         # SOLOQ field
-        soloq_rank: str = "**{tier} {rank}**".format(
-            tier=summonerData[0]['tier'].capitalize(),
-            rank=summonerData[0]['rank'])
-        soloq_winrate:float = (summonerData[0]['wins']/(summonerData[0]['wins'] + summonerData[0]['losses']))*100
-        soloq_winrate_str:str = "Winrate: **{winrate:.2f}%** ({wins}W / {losses}L)".format(
-            winrate=soloq_winrate, wins=summonerData[0]['wins'],
-            losses=summonerData[0]['losses'])
+        soloq_value = get_queue_embed_val(summonerData=summonerData, queueType="RANKED_SOLO_5x5")
         embed.add_field(
-            name="Solo/Duo",
-            value=soloq_rank + "\n" + soloq_winrate_str,
-            inline=True)
+            name = "Solo/Duo",
+            value = soloq_value,
+            inline = True)
         
         # FLEXQ field
-        # TODO: add handlers for N/A
-        embed.add_field(name="Flex", value="N/A", inline=True)
+        flexq_value = get_queue_embed_val(summonerData=summonerData, queueType="FLEX")
+        embed.add_field(
+            name = "Flex",
+            value = flexq_value,
+            inline = True)
 
         await message.channel.send(embed=embed)
         return
-
 
 # async def main():
 if __name__ == "__main__":

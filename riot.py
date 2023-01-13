@@ -28,7 +28,6 @@ def getAccountById(summonerName: str) -> dict:
     endpoint = f'https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summonerName}'
     res = requests.get(endpoint, headers=HEADER)
     json_data = res.json()
-    print(json_data)
     return json_data
 
 # TODO: check if data for SOLO_QUEUE_5x5 or FLEX exist
@@ -43,6 +42,6 @@ def getSummonerDataByEncryptedId(encryptedSummonerId: str) -> dict:
     endpoint = f'https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/{encryptedSummonerId}'
     endpoint += "?api_key=" + api_key
     res = requests.get(endpoint)
-    print(res)
-    return res.json()
+    json_data = res.json()
+    return json_data
 
