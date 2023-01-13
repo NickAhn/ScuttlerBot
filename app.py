@@ -13,6 +13,7 @@ client = discord.Client(intents=intents)
 async def on_ready():
     print("{0.user} is Online.".format(client))
 
+
 @client.event
 async def on_disconnect():
     print("{} has been disconnected.".format(client))
@@ -48,12 +49,31 @@ async def on_message(message):
             await message.channel.send('Please enter:"~leaguestats [Summoner Name]"')
             return
         
-        
         info = riot.getAccountById(user_message[1])
         summonerData = riot.getSummonerDataByEncryptedId(info['id'])
-        summonerName = "**" + user_message[1] + "**\n"
-        rank = "**" + summonerData[0]['tier'].capitalize() + " " + summonerData[0]['rank'] + "**"
-        await message.channel.send(summonerName + rank) 
+
+        embed = discord.Embed(
+            title=user_message[1],
+        )
+
+        # SOLOQ field
+        soloq_rank: str = "**{tier} {rank}**".format(
+            tier=summonerData[0]['tier'].capitalize(),
+            rank=summonerData[0]['rank'])
+        soloq_winrate:float = (summonerData[0]['wins']/(summonerData[0]['wins'] + summonerData[0]['losses']))*100
+        soloq_winrate_str:str = "Winrate: **{winrate:.2f}%** ({wins}W / {losses}L)".format(
+            winrate=soloq_winrate, wins=summonerData[0]['wins'],
+            losses=summonerData[0]['losses'])
+        embed.add_field(
+            name="Solo/Duo",
+            value=soloq_rank + "\n" + soloq_winrate_str,
+            inline=True)
+        
+        # FLEXQ field
+        # TODO: add handlers for N/A
+        embed.add_field(name="Flex", value="N/A", inline=True)
+
+        await message.channel.send(embed=embed)
         return
 
 

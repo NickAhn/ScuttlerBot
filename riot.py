@@ -31,7 +31,7 @@ def getAccountById(summonerName: str) -> dict:
     print(json_data)
     return json_data
 
-
+# TODO: check if data for SOLO_QUEUE_5x5 or FLEX exist
 def getSummonerDataByEncryptedId(encryptedSummonerId: str) -> dict:
     '''
     Get Detailed Summoner Data for Ranked Flex and Solo/Duo.
