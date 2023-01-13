@@ -65,7 +65,7 @@ async def on_message(message):
     if user_message[0] == "~leaguestats":
         '''
         Get complete information about Summoner's stats
-        Usage: ~leaguestats <summonerName>
+        Usage: ~leaguestats <summonerName> (note: summonerName is not case-sensitive)
         '''
         if len(user_message) == 1:
             await message.channel.send('Please enter:"~leaguestats [Summoner Name]"')
@@ -75,7 +75,7 @@ async def on_message(message):
         summonerData = riot.getSummonerDataByEncryptedId(info['id'])
 
         embed = discord.Embed(
-            title=user_message[1],
+            title=info['name'],
         )
 
         # SOLOQ field
