@@ -3,6 +3,7 @@ import secret
 import motor.motor_asyncio
 import riot
 from pprint import pprint
+import re
 
 TOKEN = secret.disc_token
 
@@ -57,23 +58,28 @@ async def on_message(message):
         return
 
     ## -- Bot Commands -- ##
-    if user_message[0] == "~hello":
+    if user_message[0] == "!hello":
         await message.channel.send(f"Hello {username}!")
         return
 
-    if user_message[0] == "~leaguerank":
-        await message.channel.send("~leaguerank called")
+    if user_message[0] == "!leaguerank":
+        await message.channel.send("!leaguerank called")
 
-    if user_message[0] == "~leaguestats":
+    if user_message[0] == "!leaguestats":
         '''
         Get complete information about Summoner's stats
-        Usage: ~leaguestats <summonerName> (note: summonerName is not case-sensitive)
+        Usage: !leaguestats <summonerName> (note: summonerName is not case-sensitive)
         '''
         if len(user_message) == 1:
             await message.channel.send('Please enter:"~leaguestats [Summoner Name]"')
             return
-        
-        info = riot.getAccountById(user_message[1])
+
+        summonerId: str = re.sub('!leaguestats ', '', str(message.content))
+        print("summonerId", summonerId)
+        info = riot.getAccountById(summonerId)
+        if not info:
+            await message.channel.send("Player *" + summonerId + "* not found")
+            return
         summonerData = riot.getSummonerDataByEncryptedId(info['id'])
 
         embed = discord.Embed(

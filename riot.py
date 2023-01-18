@@ -28,8 +28,7 @@ def getAccountById(summonerName: str) -> dict:
     '''
     endpoint = f'https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summonerName}'
     res = requests.get(endpoint, headers=HEADER)
-    json_data = res.json()
-    return json_data
+    return responseHandler(res)
 
 
 # API: CHAMPION-MASTERY-V4
@@ -116,5 +115,36 @@ def getMatchByMatchId(puuid: str) -> dict:
     res = requests.get(url=endpoint, headers=HEADER)
     json_data = res.json()
     return json_data
+
+
+def responseHandler(res):
+    '''
+    Handle HTTP responses from Riot API.
+    * Params:
+        res: Response = response object
+    * Return:
+        if response is successful, return as json dictionary. Otherwise, return None
+    '''
+    if res.status_code != 200:
+        print("Error:")
+        pprint(res)
+        return None
+    
+    return res.json()
+
+'''
+        try:
+            response = requests.post(_url, files={'file': some_file})
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as errh:
+            return "An Http Error occurred:" + repr(errh)
+        except requests.exceptions.ConnectionError as errc:
+            return "An Error Connecting to the API occurred:" + repr(errc)
+        except requests.exceptions.Timeout as errt:
+            return "A Timeout Error occurred:" + repr(errt)
+        except requests.exceptions.RequestException as err:
+            return "An Unknown Error occurred" + repr(err)
+'''
+
 
 
